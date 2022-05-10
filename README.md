@@ -17,7 +17,6 @@
 ### Graceful "Does not Exist" Target Failures
 
 This repo is meant to be consumed by other things. Attempting to run its targets in isolation means it has nothing to consume. All default and `check` targets need to be able to run successfully even without items to consume.
-* Each Makefile is run with `--just-print`, eg `make -f path/to/file --just-print`. If this fails, `make check` will fail. This is to mitigate any effects from accidentally running a Makefile.
 * In order to test this repo, we need to run its `make check`. Because it's [a double-colon target](https://www.gnu.org/software/make/manual/html_node/Double_002dColon.html), it will run all other `check`s. Any repo consuming this one will as well. Therefore a dry `make check` should not lead to failures because something doesn't exist. For example, the `go/*` targets cehck for necessary Go files and fail silently if those files do not exist.
 
 ### All Code is Tested
