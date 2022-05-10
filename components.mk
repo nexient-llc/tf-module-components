@@ -17,6 +17,7 @@ configure:
 		-m "$(REPO_MANIFEST)"
 	repo sync
 
+ifeq ($(IS_PIPELINE),true)
 .PHONY: git-config
 git-config:
 	$(call config,Bearer $(GIT_TOKEN))
@@ -31,7 +32,6 @@ define config
 	git config --global color.ui false
 endef
 
-ifneq ($(IS_PIPELINE),true)
 configure: git-config
 endif
 
