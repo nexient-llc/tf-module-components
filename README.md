@@ -12,7 +12,7 @@
 
 `check` is defined as [a double-colon rule](https://www.gnu.org/software/make/manual/html_node/Double_002dColon.html). This allows us to define `check` multiple times across multiple Makefiles. Each definition can be thought of appending new commands (note that the execution order of the different `check`s should **not** matter; if it does you need to reevaluate). They will all be run. In this module, you can see that each `Makefile` has its own `check` target that collects linting and testing for items in that specific Makefile.
 
-> Whenever you want to consume make files that aren't under the default naming convention (e.g. Makefile), use `makefile -f path/to/file`.
+> Whenever you want to consume make files that aren't under the default naming convention (e.g. Makefile), use `make -f path/to/file`.
 
 ### Graceful "Does not Exist" Target Failures
 
