@@ -6,6 +6,8 @@ MODULE_DIR ?= $(COMPONENTS_DIR)/module
 TFLINT_CONFIG ?= $(MODULE_DIR)/.tflint.hcl
 CONFTEST_POLICY_DIRECTORIES += $(MODULE_DIR)/policy
 
+FIND ?= find
+GREP ?= grep
 OPA ?= opa
 
 .PHONY: default
@@ -14,7 +16,7 @@ default:
 
 .PHONY: rego/test
 rego/test:
-	$(OPA) test --verbose $(MODULE_DIR)/policy
+	$(FIND) $(CONFTEST_POLICY_DIRECTORIES) -name '*.rego' | $(GREP) -q '\.rego' || exit 0; $(OPA) test --verbose $(CONFTEST_POLICY_DIRECTORIES)
 
 # This is a special declaration
 # Whenever check is defined, it must be defined with a ::
