@@ -11,13 +11,14 @@ FIND ?= find
 # Variables
 
 GO_TEST_DIRECTORIES ?= tests
+GOLANGCI_LINT_CONFIG ?= .golangci.yaml
 
 # Functions
 
 # Checks for Go files in the GO_TEST_DIRECTORIES. If they exist, runs the default configuration for golangci-lint
 # https://golangci-lint.run/usage/quick-start/
 define go_lint
-	$(FIND) $(1)/ -name '*.go' | $(GREP) -q '\.go' || exit 0; $(GOLANGCI_LINT) run -v ./$(1)/...;
+	$(FIND) $(1)/ -name '*.go' | $(GREP) -q '\.go' || exit 0; $(GOLANGCI_LINT) run -c $(GOLANGCI_LINT_CONFIG) -v ./$(1)/...;
 
 endef
 
