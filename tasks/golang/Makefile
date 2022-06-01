@@ -12,6 +12,7 @@ FIND ?= find
 
 GO_TEST_DIRECTORIES ?= tests
 GOLANGCI_LINT_CONFIG ?= .golangci.yaml
+DISABLE_MAKE_CHECK_LINT ?= true
 
 # Functions
 
@@ -31,14 +32,23 @@ endef
 # Tasks
 
 .PHONY: go/lint
-go/lint:
-	$(foreach test_dir,$(GO_TEST_DIRECTORIES),$(call go_lint,$(test_dir)))
+go/lint :
+	$(call go_lint)
 
 .PHONY: go/test
-go/test:
+go/test :
 	$(foreach test_dir,$(GO_TEST_DIRECTORIES),$(call go_test,$(test_dir)))
 
+# This is a special declaration
+# Whenever check is defined, it must be defined with a ::
+# _all_ check targets that are found will be run
+# https://www.gnu.org/software/make/manual/html_node/Double_002dColon.html
+# "check" is a GNU Make pattern that runs tests on configured software
 .PHONY: check
 check::
+ifeq ($(DISABLE_MAKE_CHECK_LINT),false)
 	$(MAKE) go/lint
+else
+	$(info "make go/lint has been disabled!")
+endif
 	$(MAKE) go/test
