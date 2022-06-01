@@ -3,25 +3,28 @@ SHELL := /bin/bash
 # Binaries
 
 GO ?= go
+GOLANGCI_LINT ?= golangci-lint
 TEE ?= tee
 GREP ?= grep
+FIND ?= find
 
 # Variables
 
-GO_TEST_DIRECTORIES ?= tests/
-DISABLE_MAKE_CHECK_LINT ?= false
+GO_TEST_DIRECTORIES ?= tests
+GOLANGCI_LINT_CONFIG ?= .golangci.yaml
+DISABLE_MAKE_CHECK_LINT ?= true
 
 # Functions
 
 # Runs go vet and ignores errors when there are no Go files
 define go_lint
-	OUTPUT=$$(set -o pipefail; $(GO) vet ./... 2>&1 | $(TEE) /dev/stdout); [ "$$?" = "0" ] || { echo $$OUTPUT | $(GREP) -q 'go mod init' || exit 1; }
+	$(FIND) $(1)/ -name '*.go' | $(GREP) -q '\.go' || exit 0; $(GOLANGCI_LINT) run -c $(GOLANGCI_LINT_CONFIG) -v ./$(1)/...;
 
 endef
 
 # Ensures the tests/ dir exists before running tests
 define go_test
-	[ -d "$(1)" ] && $(GO) test -v ./$(1) || exit 0;
+	$(FIND) $(1)/ -name '*.go' | $(GREP) -q '\.go' || exit 0; $(GO) test -v ./$(1)/...;
 
 endef
 
