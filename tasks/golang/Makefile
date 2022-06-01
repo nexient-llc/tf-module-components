@@ -12,8 +12,13 @@ FIND ?= find
 
 GO_TEST_DIRECTORIES ?= tests
 GOLANGCI_LINT_CONFIG ?= .golangci.yaml
+DISABLE_MAKE_CHECK_LINT ?= false
 
-# Functions
+# Linting
+ifeq ($(DISABLE_MAKE_CHECK_LINT),false)
+.PHONY: go/lint
+go/lint:
+	$(foreach test_dir,$(GO_TEST_DIRECTORIES),$(call go_lint,$(test_dir)))
 
 # Checks for Go files in the GO_TEST_DIRECTORIES. If they exist, runs the default configuration for golangci-lint
 # https://golangci-lint.run/usage/quick-start/
@@ -22,23 +27,21 @@ define go_lint
 
 endef
 
+check:: go/lint
+endif
+
+# Testing
+.PHONY: go/test
+go/test:
+	$(foreach test_dir,$(GO_TEST_DIRECTORIES),$(call go_test,$(test_dir)))
+
 # Check for Go files. If they exist, run tests.
 define go_test
 	$(FIND) $(1)/ -name '*.go' | $(GREP) -q '\.go' || exit 0; $(GO) test -v ./$(1)/...;
 
 endef
 
-# Tasks
-
-.PHONY: go/lint
-go/lint:
-	$(foreach test_dir,$(GO_TEST_DIRECTORIES),$(call go_lint,$(test_dir)))
-
-.PHONY: go/test
-go/test:
-	$(foreach test_dir,$(GO_TEST_DIRECTORIES),$(call go_test,$(test_dir)))
-
+# Check is dependent upon go/lint (optionally) and go/test
 .PHONY: check
-check::
-	$(MAKE) go/lint
-	$(MAKE) go/test
+check:: go/test
+	
