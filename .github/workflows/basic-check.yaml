@@ -1,0 +1,17 @@
+name: manifest-check
+on: [push, workflow_call]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    container:
+      image: nexientdevops/platform-images
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: git safe directory
+        shell: bash
+        run: |
+          git config --global --add safe.directory /__w/${{ github.event.repository.name }}/${{ github.event.repository.name }}
+      - uses: nexient-llc/.github/actions/pre-merge@main
